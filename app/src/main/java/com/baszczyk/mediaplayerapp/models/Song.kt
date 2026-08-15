@@ -18,5 +18,8 @@ data class Song(
     val createdAt: String = "",
 
     @SerialName("storage_path")
-    val storagePath: String = ""
+    val storagePath: String = "",
+
+    val isFavorite: Boolean = false,
+    val isListened: Boolean = false
 )

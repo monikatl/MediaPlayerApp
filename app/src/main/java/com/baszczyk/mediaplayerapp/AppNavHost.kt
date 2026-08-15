@@ -41,7 +41,7 @@ fun AppNavHost(
 
         composable("list") {
             ListScreen(
-                onSongClick =  { song ->
+                onSongPlayClick =  { song ->
                     navController.navigate(
                         "mediaplayer/${song.id}"
                     )
