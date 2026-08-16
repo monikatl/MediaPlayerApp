@@ -154,7 +154,7 @@ fun ListScreen(
 
             state.error != null -> {
                 ErrorContent(
-                    message = state.error!!
+                    label = "Coś poszło nie tak..."
                 )
             }
 
