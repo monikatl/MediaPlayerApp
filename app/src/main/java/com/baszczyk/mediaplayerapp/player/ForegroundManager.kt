@@ -3,7 +3,7 @@ package com.baszczyk.mediaplayerapp.player
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
-import com.baszczyk.mediaplayerapp.models.Song
+import com.baszczyk.mediaplayerapp.models.SongWithState
 import com.baszczyk.mediaplayerapp.service.PlaybackService
 
 class ForegroundManager(
@@ -11,9 +11,11 @@ class ForegroundManager(
 ) {
 
     fun play(
-        song: Song?,
+        songWithState: SongWithState,
         audioUrl: String
     ) {
+        val song = songWithState.song
+        val author = songWithState.author
 
         val intent = Intent(
             context,
@@ -24,17 +26,17 @@ class ForegroundManager(
 
             putExtra(
                 PlaybackService.EXTRA_SONG_ID,
-                song?.id
+                song.id
             )
 
             putExtra(
                 PlaybackService.EXTRA_SONG_NAME,
-                song?.name
+                song.name
             )
 
             putExtra(
                 PlaybackService.EXTRA_SONG_AUTHOR,
-                song?.author
+                author.name
             )
 
             putExtra(
@@ -70,7 +72,6 @@ class ForegroundManager(
     private fun sendAction(
         action: String
     ) {
-
         val intent = Intent(
             context,
             PlaybackService::class.java

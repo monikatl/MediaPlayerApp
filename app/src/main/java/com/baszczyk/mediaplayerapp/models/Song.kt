@@ -7,19 +7,18 @@ import kotlinx.serialization.Serializable
 data class Song(
     val id: Long,
     val name: String,
-    val author: String,
     val duration: Long,
     val uri: String,
+
+    @SerialName("author_id")
+    val authorId: Long,
 
     @SerialName("image_url")
     val imageUrl: String? = null,
 
-    @SerialName("created_at")
-    val createdAt: String = "",
-
     @SerialName("storage_path")
-    val storagePath: String = "",
+    val storagePath: String? = null,
 
-    val isFavorite: Boolean = false,
-    val isListened: Boolean = false
+    @SerialName("created_at")
+    val createdAt: String? = null
 )

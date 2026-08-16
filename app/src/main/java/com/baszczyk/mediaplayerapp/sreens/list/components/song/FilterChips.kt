@@ -1,4 +1,4 @@
-package com.baszczyk.mediaplayerapp.sreens.list.components
+package com.baszczyk.mediaplayerapp.sreens.list.components.song
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

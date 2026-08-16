@@ -1,59 +1,31 @@
 package com.baszczyk.mediaplayerapp.repo
 
-import com.baszczyk.mediaplayerapp.data.supabase.SupabaseProvider
-import com.baszczyk.mediaplayerapp.models.Song
-import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.storage.storage
+import com.baszczyk.mediaplayerapp.models.SongWithState
 
-class SongRepository {
+interface SongRepository {
 
-    private val supabase
-        get() = SupabaseProvider.client
+    suspend fun getSongs(): Result<List<SongWithState>>
 
+    suspend fun updateFavorite(
+        songId: Long,
+        isFavorite: Boolean
+    ): Result<Unit>
 
-    suspend fun getSongs(): List<Song> {
+    suspend fun updateListened(
+        songId: Long,
+        isListened: Boolean
+    ): Result<Unit>
 
-        return supabase
-            .from("songs")
-            .select()
-            .decodeList<Song>()
-    }
-
+    suspend fun updateNew(
+        songId: Long,
+        isNew: Boolean
+    ): Result<Unit>
 
     suspend fun getSongById(
-        id: Long
-    ): Song? {
+        songId: Long
+    ): Result<SongWithState>
 
-        return supabase
-            .from("songs")
-            .select {
-                filter {
-                    eq("id", id)
-                }
-            }
-            .decodeList<Song>()
-            .firstOrNull()
-    }
-
-
-    fun getSongUrl(
-        storagePath: String
-    ): String {
-
-        return supabase
-            .storage
-            .from("songs")
-            .publicUrl(storagePath)
-    }
-
-
-    fun getImageUrl(
-        imagePath: String
-    ): String {
-
-        return supabase
-            .storage
-            .from("songs")
-            .publicUrl(imagePath)
-    }
+    suspend fun getSongUrl(
+        storagePath: String?
+    ): String
 }

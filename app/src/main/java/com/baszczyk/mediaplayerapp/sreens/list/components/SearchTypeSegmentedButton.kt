@@ -28,6 +28,7 @@ fun SearchTypeSegmentedButton(
                     index = index,
                     count = labels.size
                 )
+
             ) {
                 Text(
                     text = label,

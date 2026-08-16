@@ -9,7 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.baszczyk.mediaplayerapp.sreens.home.HomeScreen
 import com.baszczyk.mediaplayerapp.sreens.list.ListScreen
+import com.baszczyk.mediaplayerapp.sreens.auth.LoginScreen
 import com.baszczyk.mediaplayerapp.sreens.mediaplayer.MediaPlayerScreen
+import com.baszczyk.mediaplayerapp.sreens.auth.RegisterScreen
 
 @Composable
 fun AppNavHost(
@@ -21,8 +23,11 @@ fun AppNavHost(
         startDestination = "home",
         modifier = Modifier.padding(paddingValues)
     ) {
+
         composable("home") {
-            HomeScreen()
+            HomeScreen(
+                {}
+            )
         }
 
         composable(
@@ -41,7 +46,7 @@ fun AppNavHost(
 
         composable("list") {
             ListScreen(
-                onSongPlayClick =  { song ->
+                onSongPlayClick = { song ->
                     navController.navigate(
                         "mediaplayer/${song.id}"
                     )

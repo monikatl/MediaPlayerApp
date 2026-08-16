@@ -1,6 +1,5 @@
-package com.baszczyk.mediaplayerapp.sreens.list.components
+package com.baszczyk.mediaplayerapp.sreens.list.components.song
 
-import com.baszczyk.mediaplayerapp.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,17 +21,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.baszczyk.mediaplayerapp.R
 import com.baszczyk.mediaplayerapp.models.Song
+import com.baszczyk.mediaplayerapp.models.SongWithState
 
 @Composable
 fun SongItem(
-    song: Song,
+    songWithState: SongWithState,
     onSongPlayClick: (Song) -> Unit
 ) {
+    val song = songWithState.song
+    val author = songWithState.author
+    val state = songWithState.state
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,37 +72,33 @@ fun SongItem(
             )
 
             Text(
-                text = song.author,
+                text = author.name,
                 fontSize = 10.sp,
-                color = Color(0xFF003153),
+                color = Color(0xFF003153)
             )
         }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             Icon(
                 imageVector = Icons.Default.PlayCircleOutline,
-                contentDescription = "play",
+                contentDescription = "Odtwórz",
                 tint = Color(0xFF003153),
                 modifier = Modifier
-                    .clickable{
+                    .clickable {
                         onSongPlayClick(song)
                     }
                     .size(28.dp)
             )
+
             Text(
                 text = formatDuration(song.duration),
                 fontSize = 10.sp
             )
         }
     }
-}
-
-private fun formatDate(
-    date: String
-): String {
-    return date.take(10)
 }
 
 private fun formatDuration(
@@ -111,25 +111,5 @@ private fun formatDuration(
     return "%d:%02d".format(
         minutes,
         seconds
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SongItemPreview() {
-    SongItem(
-        song = Song(
-            id = 1L,
-            name = "Blinding Lights",
-            author = "The Weeknd",
-            createdAt = "2026-08-14",
-            duration = 200_000L,
-            imageUrl = null,
-            uri = "",
-            storagePath = "",
-            isFavorite = true,
-            isListened = true,
-        ),
-        onSongPlayClick = {}
     )
 }
