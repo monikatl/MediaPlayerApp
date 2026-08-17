@@ -15,39 +15,18 @@ class SongRepositoryImpl() : SongRepository {
     private val supabase
         get() = SupabaseProvider.client
 
+    private val userId = supabase.auth.currentUserOrNull()?.id
+        ?: error("Użytkownik nie jest zalogowany")
+
     override suspend fun getSongs(): Result<List<SongWithState>> {
         return runCatching {
 
-            val userId = supabase.auth.currentUserOrNull()?.id
-                ?: error("Użytkownik nie jest zalogowany")
+            val songs = getSongsDO()
+            val authors = getAuthorsDO()
+            val states = getStatesDO()
 
-
-            val songs = supabase
-                .from("songs")
-                .select()
-                .decodeList<Song>()
-
-            val authors = supabase
-                .from("authors")
-                .select()
-                .decodeList<Author>()
-
-            val states = supabase
-                .from("song_states")
-                .select {
-                    filter {
-                        eq("user_id", userId)
-                    }
-                }
-                .decodeList<SongState>()
-
-            val authorsById = authors.associateBy {
-                it.id
-            }
-
-            val statesBySongId = states.associateBy {
-                it.songId
-            }
+            val authorsById = authors.associateBy { it.id }
+            val statesBySongId = states.associateBy { it.songId }
 
             songs.mapNotNull { song ->
 
@@ -85,6 +64,25 @@ class SongRepositoryImpl() : SongRepository {
         }
     }
 
+    private suspend fun getSongsDO() = supabase
+        .from("songs")
+        .select()
+        .decodeList<Song>()
+
+    private suspend fun getAuthorsDO() = supabase
+        .from("authors")
+        .select()
+        .decodeList<Author>()
+
+    private suspend fun getStatesDO() = supabase
+        .from("song_states")
+        .select {
+            filter {
+                eq("user_id", userId)
+            }
+        }
+        .decodeList<SongState>()
+
     override suspend fun updateFavorite(
         songId: Long,
         isFavorite: Boolean
@@ -118,47 +116,11 @@ class SongRepositoryImpl() : SongRepository {
     override suspend fun getSongById(
         songId: Long
     ): Result<SongWithState> {
-
         return runCatching {
+            val song = getSongByIdDO(songId)
+            val author = getAuthorByIdDO(song.authorId)
 
-            val userId = supabase.auth.currentUserOrNull()?.id
-                ?: error("Użytkownik nie jest zalogowany")
-
-            val song = supabase
-                .from("songs")
-                .select {
-                    filter {
-                        eq("id", songId)
-                    }
-                }
-                .decodeSingle<Song>()
-
-            val author = supabase
-                .from("authors")
-                .select {
-                    filter {
-                        eq("id", song.authorId)
-                    }
-                }
-                .decodeSingle<Author>()
-
-            val state = supabase
-                .from("song_states")
-                .select {
-                    filter {
-                        eq("user_id", userId)
-                        eq("song_id", songId)
-                    }
-                }
-                .decodeList<SongState>()
-                .firstOrNull()
-                ?: SongState(
-                    songId = songId,
-                    userId = userId,
-                    isFavorite = false,
-                    isListened = false,
-                    isNew = true
-                )
+            val state = getStateByIdDO(songId)
 
             SongWithState(
                 song = song,
@@ -168,24 +130,56 @@ class SongRepositoryImpl() : SongRepository {
         }
     }
 
+    private suspend fun getSongByIdDO(songId: Long) = supabase
+        .from("songs")
+        .select {
+            filter {
+                eq("id", songId)
+            }
+        }
+        .decodeSingle<Song>()
+
+    private suspend fun getAuthorByIdDO(authorId: Long) = supabase
+        .from("authors")
+        .select {
+            filter {
+                eq("id", authorId)
+            }
+        }
+        .decodeSingle<Author>()
+
+    private suspend fun getStateByIdDO(songId: Long) = supabase
+        .from("song_states")
+        .select {
+            filter {
+                eq("user_id", userId)
+                eq("song_id", songId)
+            }
+        }
+        .decodeList<SongState>()
+        .firstOrNull()
+        ?: SongState(
+            songId = songId,
+            userId = userId,
+            isFavorite = false,
+            isListened = false,
+            isNew = true
+        )
+
     override suspend fun getSongUrl(
         storagePath: String?
     ): String {
 
-        return runCatching {
+        return run {
 
             val path = storagePath
                 ?: error("Ścieżka utworu nie może być pusta")
-
-            Log.d("STORAGE", "bucket = songs")
-            Log.d("STORAGE", "path = '$path'")
 
             supabase
                 .storage
                 .from("songs")
                 .publicUrl(path)
-
-        }.getOrThrow()
+        }
     }
 
     private suspend fun updateState(
@@ -195,10 +189,6 @@ class SongRepositoryImpl() : SongRepository {
         isNew: Boolean? = null
     ): Result<Unit> {
         return runCatching {
-
-            val userId = supabase.auth.currentUserOrNull()?.id
-                ?: error("Użytkownik nie jest zalogowany")
-
             val currentState = supabase
                 .from("song_states")
                 .select {
