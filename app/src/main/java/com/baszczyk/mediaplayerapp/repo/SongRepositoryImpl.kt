@@ -2,14 +2,13 @@ package com.baszczyk.mediaplayerapp.repo
 import android.util.Log
 import com.baszczyk.mediaplayerapp.data.supabase.SupabaseProvider
 
-
-
 import com.baszczyk.mediaplayerapp.models.Author
 import com.baszczyk.mediaplayerapp.models.Song
 import com.baszczyk.mediaplayerapp.models.SongState
 import com.baszczyk.mediaplayerapp.models.SongWithState
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.storage.storage
 
 class SongRepositoryImpl() : SongRepository {
 
@@ -22,23 +21,16 @@ class SongRepositoryImpl() : SongRepository {
             val userId = supabase.auth.currentUserOrNull()?.id
                 ?: error("Użytkownik nie jest zalogowany")
 
-            Log.d("SONGS_DEBUG", "userId = $userId")
 
             val songs = supabase
                 .from("songs")
                 .select()
                 .decodeList<Song>()
 
-            Log.d("SONGS_DEBUG", "songs = ${songs.size}")
-            Log.d("SONGS_DEBUG", "songs data = $songs")
-
             val authors = supabase
                 .from("authors")
                 .select()
                 .decodeList<Author>()
-
-            Log.d("SONGS_DEBUG", "authors = ${authors.size}")
-            Log.d("SONGS_DEBUG", "authors data = $authors")
 
             val states = supabase
                 .from("song_states")
@@ -49,9 +41,6 @@ class SongRepositoryImpl() : SongRepository {
                 }
                 .decodeList<SongState>()
 
-            Log.d("SONGS_DEBUG", "states = ${states.size}")
-            Log.d("SONGS_DEBUG", "states data = $states")
-
             val authorsById = authors.associateBy {
                 it.id
             }
@@ -60,22 +49,7 @@ class SongRepositoryImpl() : SongRepository {
                 it.songId
             }
 
-            Log.d(
-                "SONGS_DEBUG",
-                "authorsById = ${authorsById.keys}"
-            )
-
-            Log.d(
-                "SONGS_DEBUG",
-                "statesBySongId = ${statesBySongId.keys}"
-            )
-
             songs.mapNotNull { song ->
-
-                Log.d(
-                    "SONGS_DEBUG",
-                    "song id=${song.id}, authorId=${song.authorId}"
-                )
 
                 val author = authorsById[song.authorId]
 
@@ -194,8 +168,24 @@ class SongRepositoryImpl() : SongRepository {
         }
     }
 
-    override suspend fun getSongUrl(storagePath: String?): String {
-        TODO("Not yet implemented")
+    override suspend fun getSongUrl(
+        storagePath: String?
+    ): String {
+
+        return runCatching {
+
+            val path = storagePath
+                ?: error("Ścieżka utworu nie może być pusta")
+
+            Log.d("STORAGE", "bucket = songs")
+            Log.d("STORAGE", "path = '$path'")
+
+            supabase
+                .storage
+                .from("songs")
+                .publicUrl(path)
+
+        }.getOrThrow()
     }
 
     private suspend fun updateState(

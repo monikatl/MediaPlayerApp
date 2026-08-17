@@ -46,7 +46,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MediaPlayerScreen(
-    songId: Long?,
+    songId: Long? = null,
     viewModel: MediaPlayerViewModel = koinViewModel()
 ) {
 
@@ -94,12 +94,6 @@ fun MediaPlayerScreen(
             verticalArrangement = Arrangement.Center
         ) {
 
-            /*
-             * ==========================
-             * OKŁADKA
-             * ==========================
-             */
-
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -128,11 +122,6 @@ fun MediaPlayerScreen(
                 modifier = Modifier.height(24.dp)
             )
 
-            /*
-             * ==========================
-             * TYTUŁ + AUTOR
-             * ==========================
-             */
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

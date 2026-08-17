@@ -30,6 +30,10 @@ fun AppNavHost(
             )
         }
 
+        composable("mediaplayer") {
+            MediaPlayerScreen()
+        }
+
         composable(
             route = "mediaplayer/{songId}"
         ) { backStackEntry ->

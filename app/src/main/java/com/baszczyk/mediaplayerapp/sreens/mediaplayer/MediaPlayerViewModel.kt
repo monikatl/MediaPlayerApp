@@ -3,20 +3,12 @@ package com.baszczyk.mediaplayerapp.sreens.mediaplayer
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.baszczyk.mediaplayerapp.models.SongWithState
 import com.baszczyk.mediaplayerapp.player.ForegroundManager
 import com.baszczyk.mediaplayerapp.repo.SongRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
-data class MediaPlayerUiState(
-    val currentSong: SongWithState? = null,
-    val isPlaying: Boolean = false,
-    val isLoading: Boolean = false,
-    val error: String? = null
-)
 
 class MediaPlayerViewModel(
     private val foregroundManager: ForegroundManager,
@@ -48,16 +40,14 @@ class MediaPlayerViewModel(
                             currentSong = songWithState
                         )
 
-                        val storagePath =
-                            songWithState.song.storagePath
-
-                        val audioUrl =
-                            repository.getSongUrl(storagePath)
+                        val storagePath = songWithState.song.storagePath
 
                         Log.d(
                             "PLAYER",
                             "storagePath = $storagePath"
                         )
+
+                        val audioUrl = repository.getSongUrl(storagePath)
 
                         Log.d(
                             "PLAYER",
@@ -80,6 +70,12 @@ class MediaPlayerViewModel(
                         )
 
                     } catch (e: Exception) {
+
+                        Log.e(
+                            "PLAYER",
+                            "Błąd odtwarzania",
+                            e
+                        )
 
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
