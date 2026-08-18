@@ -5,10 +5,13 @@ import com.baszczyk.mediaplayerapp.repo.AuthRepository
 import com.baszczyk.mediaplayerapp.repo.AuthRepositoryImpl
 import com.baszczyk.mediaplayerapp.repo.SongRepository
 import com.baszczyk.mediaplayerapp.repo.SongRepositoryImpl
+import com.baszczyk.mediaplayerapp.repo.UserRepository
+import com.baszczyk.mediaplayerapp.repo.UserRepositoryImpl
 import com.baszczyk.mediaplayerapp.sreens.auth.AuthViewModel
 import com.baszczyk.mediaplayerapp.sreens.mediaplayer.MediaPlayerViewModel
 import com.baszczyk.mediaplayerapp.sreens.home.HomeViewModel
 import com.baszczyk.mediaplayerapp.sreens.list.ListViewModel
+import com.baszczyk.mediaplayerapp.sreens.profile.ProfileViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
@@ -52,6 +55,16 @@ val appModule = module {
             foregroundManager = get(),
             repository = get()
 
+        )
+    }
+
+    single<UserRepository> {
+        UserRepositoryImpl()
+    }
+
+    viewModel {
+        ProfileViewModel(
+            userRepository = get()
         )
     }
 }

@@ -161,7 +161,8 @@ class AuthViewModel(
             repository
                 .register(
                     email = email,
-                    password = password
+                    password = password,
+                    name = ""
                 )
                 .onSuccess {
 

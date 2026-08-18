@@ -1,24 +1,24 @@
 package com.baszczyk.mediaplayerapp.repo
 
 import com.baszczyk.mediaplayerapp.data.supabase.SupabaseProvider
-import com.baszczyk.mediaplayerapp.models.User
+import com.baszczyk.mediaplayerapp.models.AuthUser
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 class AuthRepositoryImpl : AuthRepository {
 
     private val supabase
         get() = SupabaseProvider.client
 
-    override val authState: Flow<User?> =
-        supabase.auth.sessionStatus.map { sessionStatus ->
+    override val authState: Flow<AuthUser?> =
+        supabase.auth.sessionStatus.map {
 
-            val currentUser = supabase.auth.currentUserOrNull()
-
-            currentUser?.let {
-                User(
+            supabase.auth.currentUserOrNull()?.let {
+                AuthUser(
                     id = it.id,
                     email = it.email
                 )
@@ -31,11 +31,8 @@ class AuthRepositoryImpl : AuthRepository {
     ): Result<Unit> {
 
         return runCatching {
-
             supabase.auth.signInWith(Email) {
-
                 this.email = email
-
                 this.password = password
             }
         }
@@ -43,16 +40,18 @@ class AuthRepositoryImpl : AuthRepository {
 
     override suspend fun register(
         email: String,
-        password: String
+        password: String,
+        name: String
     ): Result<Unit> {
 
         return runCatching {
-
             supabase.auth.signUpWith(Email) {
-
                 this.email = email
-
                 this.password = password
+
+                data = buildJsonObject {
+                    put("name", name)
+                }
             }
         }
     }
@@ -64,11 +63,10 @@ class AuthRepositoryImpl : AuthRepository {
         }
     }
 
-    override fun currentUser(): User? {
+    override fun currentUser(): AuthUser? {
 
         return supabase.auth.currentUserOrNull()?.let {
-
-            User(
+            AuthUser(
                 id = it.id,
                 email = it.email
             )

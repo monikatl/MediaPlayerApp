@@ -1,6 +1,6 @@
 package com.baszczyk.mediaplayerapp.sreens.auth
 
-import com.baszczyk.mediaplayerapp.models.User
+import com.baszczyk.mediaplayerapp.models.AuthUser
 
 data class AuthUiState(
     val email: String = "",
@@ -8,7 +8,7 @@ data class AuthUiState(
 
     val isLoading: Boolean = false,
 
-    val user: User? = null,
+    val user: AuthUser? = null,
 
     val isLoggedIn: Boolean = false,
 

@@ -58,6 +58,7 @@ ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref =
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
 
 # Supabase - BEZ BOM (poprawione)
+auth-kt = { group = "io.github.jan-tennert.supabase", name = "auth-kt", version.ref = "supabase" }
 postgrest-kt = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt", version.ref = "supabase" }
 storage-kt = { group = "io.github.jan-tennert.supabase", name = "storage-kt", version.ref = "supabase" }
 

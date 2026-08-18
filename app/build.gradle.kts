@@ -114,4 +114,8 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
+    implementation(libs.auth.kt)
+    implementation(libs.postgrest.kt)
+    implementation(libs.storage.kt)
+
 }

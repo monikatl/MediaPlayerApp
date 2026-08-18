@@ -41,7 +41,10 @@ fun MainScreen() {
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(userName)
+            CustomTopAppBar(
+                userName = userName,
+                navController = navController
+            )
         },
         bottomBar = {
             BottomBar(
