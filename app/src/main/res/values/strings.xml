@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MediaPlayerApp</string>
+
+    <string name="media_notification_channel_name">Odtwarzacz muzyki</string>
+    <string name="media_notification_channel_description">Kanał dla powiadomień odtwarzacza</string>
+    <string name="media_notification_channel_id">media_playback_channel</string>
+    <string name="notification_title">Odtwarzanie muzyki</string>
+    <string name="notification_text">Trwa odtwarzanie...</string>
 </resources>

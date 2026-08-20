@@ -15,39 +15,51 @@ class MediaPlayerViewModel(
     private val repository: SongRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(
-        MediaPlayerUiState()
-    )
+    private val _uiState =
+        MutableStateFlow(
+            MediaPlayerUiState()
+        )
 
     val uiState: StateFlow<MediaPlayerUiState> =
         _uiState.asStateFlow()
 
-    fun playSongById(songId: Long) {
+    fun playSongById(
+        songId: Long
+    ) {
 
         viewModelScope.launch {
 
-            _uiState.value = _uiState.value.copy(
-                isLoading = true,
-                error = null
-            )
+            _uiState.value =
+                _uiState.value.copy(
+                    isLoading = true,
+                    error = null
+                )
 
             repository.getSongById(songId)
                 .onSuccess { songWithState ->
 
                     try {
 
-                        _uiState.value = _uiState.value.copy(
-                            currentSong = songWithState
-                        )
+                        _uiState.value =
+                            _uiState.value.copy(
+                                currentSong =
+                                    songWithState
+                            )
 
-                        val storagePath = songWithState.song.storagePath
+                        val storagePath =
+                            songWithState
+                                .song
+                                .storagePath
 
                         Log.d(
                             "PLAYER",
                             "storagePath = $storagePath"
                         )
 
-                        val audioUrl = repository.getSongUrl(storagePath)
+                        val audioUrl =
+                            repository.getSongUrl(
+                                storagePath
+                            )
 
                         Log.d(
                             "PLAYER",
@@ -55,19 +67,26 @@ class MediaPlayerViewModel(
                         )
 
                         foregroundManager.play(
-                            songWithState = songWithState,
-                            audioUrl = audioUrl
+                            songWithState =
+                                songWithState,
+
+                            audioUrl =
+                                audioUrl
                         )
 
                         repository.updateListened(
-                            songId = songWithState.song.id,
-                            isListened = true
+                            songId =
+                                songWithState.song.id,
+
+                            isListened =
+                                true
                         )
 
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            isPlaying = true
-                        )
+                        _uiState.value =
+                            _uiState.value.copy(
+                                isLoading = false,
+                                isPlaying = true
+                            )
 
                     } catch (e: Exception) {
 
@@ -77,47 +96,52 @@ class MediaPlayerViewModel(
                             e
                         )
 
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            isPlaying = false,
-                            error = e.message
-                                ?: "Nie udało się odtworzyć piosenki"
-                        )
+                        _uiState.value =
+                            _uiState.value.copy(
+                                isLoading = false,
+                                isPlaying = false,
+                                error =
+                                    e.message
+                                        ?: "Nie udało się odtworzyć piosenki"
+                            )
                     }
                 }
                 .onFailure { error ->
 
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        isPlaying = false,
-                        error = error.message
-                            ?: "Nie udało się pobrać piosenki"
-                    )
+                    _uiState.value =
+                        _uiState.value.copy(
+                            isLoading = false,
+                            isPlaying = false,
+                            error =
+                                error.message
+                                    ?: "Nie udało się pobrać piosenki"
+                        )
                 }
         }
     }
 
     fun pause() {
         foregroundManager.pause()
-
-        _uiState.value = _uiState.value.copy(
-            isPlaying = false
-        )
+        _uiState.value =
+            _uiState.value.copy(
+                isPlaying = false
+            )
     }
 
     fun resume() {
         foregroundManager.resume()
-
-        _uiState.value = _uiState.value.copy(
-            isPlaying = true
-        )
+        _uiState.value =
+            _uiState.value.copy(
+                isPlaying = true
+            )
     }
 
     fun stop() {
         foregroundManager.stop()
-
-        _uiState.value = _uiState.value.copy(
-            isPlaying = false
-        )
+        _uiState.value =
+            _uiState.value.copy(
+                isPlaying = false,
+                position = 0L
+            )
     }
 }

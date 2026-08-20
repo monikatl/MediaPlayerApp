@@ -17,68 +17,33 @@ class ForegroundManager(
         val song = songWithState.song
         val author = songWithState.author
 
-        val intent = Intent(
-            context,
-            PlaybackService::class.java
-        ).apply {
-
+        val intent = Intent(context, PlaybackService::class.java).apply {
             action = PlaybackService.ACTION_PLAY
-
-            putExtra(
-                PlaybackService.EXTRA_SONG_ID,
-                song.id
-            )
-
-            putExtra(
-                PlaybackService.EXTRA_SONG_NAME,
-                song.name
-            )
-
-            putExtra(
-                PlaybackService.EXTRA_SONG_AUTHOR,
-                author.name
-            )
-
-            putExtra(
-                PlaybackService.EXTRA_SONG_URI,
-                audioUrl
-            )
+            putExtra(PlaybackService.EXTRA_SONG_ID, song.id)
+            putExtra(PlaybackService.EXTRA_SONG_NAME, song.name)
+            putExtra(PlaybackService.EXTRA_SONG_AUTHOR, author.name)
+            putExtra(PlaybackService.EXTRA_SONG_URI, audioUrl)
         }
 
-        ContextCompat.startForegroundService(
-            context,
-            intent
-        )
+        ContextCompat.startForegroundService(context, intent)
     }
 
     fun pause() {
-        sendAction(
-            PlaybackService.ACTION_PAUSE
-        )
+        sendAction(PlaybackService.ACTION_PAUSE)
     }
 
     fun resume() {
-        sendAction(
-            PlaybackService.ACTION_RESUME
-        )
+        sendAction(PlaybackService.ACTION_RESUME)
     }
 
     fun stop() {
-        sendAction(
-            PlaybackService.ACTION_STOP
-        )
+        sendAction(PlaybackService.ACTION_STOP)
     }
 
-    private fun sendAction(
-        action: String
-    ) {
-        val intent = Intent(
-            context,
-            PlaybackService::class.java
-        ).apply {
+    private fun sendAction(action: String) {
+        val intent = Intent(context, PlaybackService::class.java).apply {
             this.action = action
         }
-
         context.startService(intent)
     }
 }
